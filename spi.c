@@ -11,7 +11,7 @@ void spi_init(void)
 	{
 	// setup spi pins
 	DDRB  &= (uint8_t)~(_BV(PIN_MOSI) | _BV(PIN_SS) | _BV(PIN_SCLK));  // set pins for input
-	PORTB &= (_BV(PIN_MOSI) | _BV(PIN_SS) | _BV(PIN_SCLK));            // turn on pull-up resistors
+	PORTB |= (_BV(PIN_MOSI) | _BV(PIN_SS) | _BV(PIN_SCLK));            // turn on pull-up resistors
 
 	DDRB &= (uint8_t)~(_BV(PIN_MISO));                      // input pins
 	DDRB |= (_BV(PIN_MOSI) | _BV(PIN_SS) | _BV(PIN_SCLK));  // output pins

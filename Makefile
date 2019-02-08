@@ -16,6 +16,11 @@ AVRD_FLAGS = -v
 #FUSES      = -U lfuse:w:0xFF:m -U hfuse:w:0xDE:m -U efuse:w:0x05:m
 UART_BAUD  = 115200
 
+# stdio printf options: float, minimal, normal
+#LIB_PRINTF = -Wl,-u,vfprintf -lprintf_flt -lm
+#LIB_PRINTF = -Wl,-u,vfprintf -lprintf_min
+LIB_PRINTF =
+
 # files
 ELF        = $(TARGET).elf
 HEX        = $(TARGET).hex
@@ -28,11 +33,6 @@ ASMS       = $(SOURCES:.c=.s)
 TEST_TGT   = $(TARGET)_test
 TEST_SRC   = $(TEST_TGT).c
 TEST_OBJ   = $(TEST_TGT).o
-
-# stdio printf options: float, minimal, normal
-#LIB_PRINTF = -Wl,-u,vfprintf -lprintf_flt -lm
-#LIB_PRINTF = -Wl,-u,vfprintf -lprintf_min
-LIB_PRINTF =
 
 # compiler options
 STANDARD   = -std=gnu11
@@ -67,7 +67,7 @@ lib:	$(LIB)
 
 test: $(OBJS)
 	$(COMPILE) -D TEST -c $(TEST_SRC) -o $(TEST_OBJ)
-	$(COMPILE) -o $(TARGET).elf $(OBJS) $(TEST_OBJ) $(L_FLAGS)
+	$(COMPILE) -o $(ELF) $(OBJS) $(TEST_OBJ) $(L_FLAGS)
 	$(AVROBJCOPY)
 
 #d all other .c files need a matching .h
@@ -94,8 +94,8 @@ install: $(LIB)
 clean:
 	rm -f $(LIB) $(HEX) $(ELF) $(OBJS) $(TEST_OBJ)
 
-disasm:	$(TARGET).elf
-	avr-objdump -d $(TARGET).elf
+disasm:	$(ELF)
+	avr-objdump -d $(ELF)
 
 asm: $(ASMS)
 
@@ -107,8 +107,8 @@ monitor2:
 
 
 # file targets
-$(TARGET).elf: $(OBJS)
-	$(COMPILE) -o $(TARGET).elf $(OBJS) $(L_FLAGS)
+$(ELF): $(OBJS)
+	$(COMPILE) -o $(ELF) $(OBJS) $(L_FLAGS)
 
 $(HEX): $(ELF)
 	$(AVROBJCOPY)

@@ -1,13 +1,8 @@
 #ifndef SPI_H_
 #define SPI_H_
 
-#include "common.h"
-
-// spi pin definitions
-#define PIN_SS       DDB2
-#define PIN_MOSI     DDB3
-#define PIN_MISO     DDB4
-#define PIN_SCLK     DDB5
+#include <stdint.h>
+#include <stddef.h>
 
 // low level functions
 void    spi_init(void);

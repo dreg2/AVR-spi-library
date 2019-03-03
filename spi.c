@@ -4,10 +4,10 @@
 #include "spi.h"
 
 // spi pin definitions
-#define PIN_SS       DDB2
-#define PIN_MOSI     DDB3
-#define PIN_MISO     DDB4
-#define PIN_SCLK     DDB5
+#define PIN_SS       PIN2
+#define PIN_MOSI     PIN3
+#define PIN_MISO     PIN4
+#define PIN_SCLK     PIN5
 
 
 //----------------------------------------------------------------------------------------------------
@@ -16,14 +16,14 @@
 void spi_init(void)
 	{
 	// setup spi pins
-	DDRB  &= (uint8_t)~(_BV(PIN_MOSI) | _BV(PIN_SS) | _BV(PIN_SCLK));  // set pins for input
-	PORTB |= (_BV(PIN_MOSI) | _BV(PIN_SS) | _BV(PIN_SCLK));            // turn on pull-up resistors
+	DDRB  &= (uint8_t)~((1 << PIN_MOSI) | (1 << PIN_SS) | (1 << PIN_SCLK));  // set pins for input
+	PORTB |= ((1 << PIN_MOSI) | (1 << PIN_SS) | (1 << PIN_SCLK));            // turn on pull-up resistors
 
-	DDRB &= (uint8_t)~(_BV(PIN_MISO));                      // input pins
-	DDRB |= (_BV(PIN_MOSI) | _BV(PIN_SS) | _BV(PIN_SCLK));  // output pins
+	DDRB &= (uint8_t)~((1 << PIN_MISO));                      // input pins
+	DDRB |= ((1 << PIN_MOSI) | (1 << PIN_SS) | (1 << PIN_SCLK));  // output pins
 
 	// configure spi
-	SPCR = _BV(SPE) | _BV(MSTR) | _BV(SPR0);                // enable spi master mode with clock/16 (1 mhz)
+	SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR0);                // enable spi master mode with clock/16 (1 mhz)
 	}
 
 //----------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ uint8_t spi_xmit(uint8_t byte)
 	SPDR = byte;
 
 	// wait for transfer to complete
-	while (!(SPSR & _BV(SPIF)))
+	while (!(SPSR & (1 << SPIF)))
 		;
 
 	// return byte received
@@ -47,7 +47,7 @@ uint8_t spi_xmit(uint8_t byte)
 //----------------------------------------------------------------------------------------------------
 void spi_xfer(uint8_t *in_data, const uint8_t *out_data, size_t count)
 	{
-	PORTB &= (uint8_t)~(_BV(PIN_SS)); // slave select low
+	PORTB &= (uint8_t)~((1 << PIN_SS)); // slave select low
 
 	for (size_t i = 0; i < count; i++)
 		{
@@ -58,7 +58,7 @@ void spi_xfer(uint8_t *in_data, const uint8_t *out_data, size_t count)
 			SPDR = 0xff; // dummy data
 
 		// spi transfer
-		while (!(SPSR & _BV(SPIF)))
+		while (!(SPSR & (1 << SPIF)))
 			;
 
 		// save inbound data
@@ -66,6 +66,6 @@ void spi_xfer(uint8_t *in_data, const uint8_t *out_data, size_t count)
 			in_data[i] = SPDR;
 		}
 
-	PORTB |= _BV(PIN_SS); // slave select high
+	PORTB |= (1 << PIN_SS); // slave select high
 	}
 

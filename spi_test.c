@@ -27,7 +27,7 @@ int main(void)
 			0xBE, 0xEF
 			};
 
-	#define DATA_TX_SIZE (sizeof(data_tx)/sizeof(data_tx[0]))
+	#define DATA_TX_SIZE (sizeof data_tx/sizeof data_tx[0])
 	uint8_t data_rx[DATA_TX_SIZE] = {0};
 
 	// send/receive data

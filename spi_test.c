@@ -7,7 +7,7 @@
 
 int main(void)
 	{
-	uart_init_115200();           // initialize uart
+	uart_init_baud();           // initialize uart
 	printf("uart initialized\n");
 	getchar();
 
